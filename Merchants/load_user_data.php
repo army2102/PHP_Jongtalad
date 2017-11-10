@@ -1,11 +1,11 @@
 <?php
 
-require 'connectDB.php'
+require 'connectDB.php';
 
 $username = $_POST['username'];
 
-$sql = 'SELECT name, surname, phonenumber FROM merchants
-WHERE username = '$username' ;';
+$sql = "SELECT name, surname, phonenumber FROM merchants
+WHERE username = '$username' ;";
 
 $result = $conn->query($sql);
 if ($result -> num_rows == 1){

@@ -1,22 +1,20 @@
 <?php
 require 'connectDB.php';
 
-$UserName =$_POST['username'];
-$PassWord =$_POST['password'];
+$username = $_POST['username'];
+$password = $_POST['password'];
 
-$sql= "SELECT * FROM merchants
-WHERE username = '$UserName'
-AND password = '$PassWord';";
+$sql = "SELECT * FROM merchants
+WHERE username = '$username'
+AND password = '$password';";
 
-$result =$conn->query($sql);
+$result = $conn->query($sql);
 
-if ($result->num_rows==1 ) {
-   echo '1';
+if ($result->num_rows == 1) {
+	echo '1';
 } else {
     echo '0';
 }
 
 $conn->close();
-
-
 ?>
