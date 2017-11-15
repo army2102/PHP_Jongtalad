@@ -129,11 +129,12 @@ function isMaximumMarketReserved(){
 }   
 ///////////////////////////////////////////  
 
-// เช็คว่าล็อคว่างหรือไม่ ถ้าว่างให้ดำเนินการจองได้
-if(!isMaximumMarketReserved()){
+
+if(isMaximumMarketReserved()){
     echo 2;
 }
-if(isLockEmpty()){
+// เช็คว่าล็อคว่างหรือไม่ ถ้าว่างให้ดำเนินการจองได้
+else if(isLockEmpty()){
     // เช็คว่าพ่อค้า, แม่ค้า ท่านนี้อยู่ในฐานข้อมูลหรือไม่
     if(getMerchantId() == 0){
         setMerchantID();
