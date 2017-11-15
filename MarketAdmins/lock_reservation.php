@@ -15,6 +15,7 @@ $marketName = $_POST['marketName'];
 $lockName = $_POST['lockName'];
 $productTypeName = $_POST['productTypeName'];
 $saleDate = $_POST['saleDate'];
+$MAXIMUN_RESERVED = 3;
 
 //Function list
 ///////////////////////////////////////////
@@ -107,9 +108,31 @@ function isLockEmpty() {
         return false;
     }
 }
+
+function isMaximumMarketReserved(){
+    global $conn, $MAXIMUN_RESERVED, $saleDate; 
+    
+    $merchant_id = getMerchantId();
+    
+    $sql = "SELECT count(*) FROM
+    market_lock_reservations
+    WHERE merchant_id = '$merchant_id'
+    AND sale_date ='$saleDate';";
+    
+    $result = $conn->query($sql);
+    
+    if ($result->num_rows > $MAXIMUN_RESERVED){
+        return true;
+    }  else {
+        return false;
+    }
+}   
 ///////////////////////////////////////////  
 
 // เช็คว่าล็อคว่างหรือไม่ ถ้าว่างให้ดำเนินการจองได้
+if(!isMaximumMarketReserved()){
+    echo 2;
+}
 if(isLockEmpty()){
     // เช็คว่าพ่อค้า, แม่ค้า ท่านนี้อยู่ในฐานข้อมูลหรือไม่
     if(getMerchantId() == 0){
