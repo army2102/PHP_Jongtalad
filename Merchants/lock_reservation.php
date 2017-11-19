@@ -4,13 +4,10 @@ require_once "connectDB.php";
 
 //ข้อมูลจากฝั่ง Android
 //ข้อมูลเกี่ยวกับพ่อค้า, แม่ค้า
-$merchantName = $_POST['merchantName'];
-$merchantSurname = $_POST['merchantSurname'];
-$merchantPhonenumber = $_POST['merchantPhonenumber'];
+$username = $_POST['username'];
 
 
 //ข้อมูลเกี่ยวกับการจอง
-$marketAdmin_username = $_POST['marketAdmin_username'];
 $marketName = $_POST['marketName'];
 $lockName = $_POST['lockName'];
 $productTypeName = $_POST['productTypeName'];
@@ -19,16 +16,6 @@ $MAXIMUN_RESERVED = 3;
 
 //Function list
 ///////////////////////////////////////////
-function getMarketAdminId(){
-    global $conn, $marketAdmin_username;
-    $sql = "SELECT market_admin_id FROM market_admins
-    WHERE username = '$marketAdmin_username';";
-    $result = $conn->query($sql);
-    while($row = $result->fetch_assoc()){
-        $market_admin_id = $row["market_admin_id"]; 
-    }
-    return $market_admin_id;
-}
 
 function getMarketLockId(){
     global $conn, $marketName, $lockName;
@@ -51,14 +38,12 @@ function getMarketLockId(){
 }
 
 function getMerchantId() {
-    global $conn, $merchantName, $merchantSurname, $merchantPhonenumber;
+    global $conn, $username;
     
       $sql =
       "SELECT merchant_id FROM merchants
-      WHERE name = '$merchantName'
-      AND surname = '$merchantSurname'
-      AND phonenumber = '$merchantPhonenumber';";
-    
+      WHERE username = '$username';";
+
       $result =  $conn->query($sql);
       if($result->num_rows == 1){
           while($row = $result->fetch_assoc()){
@@ -70,12 +55,6 @@ function getMerchantId() {
       }
 }
 
-function setMerchantID(){
-    global $conn, $merchantName, $merchantSurname, $merchantPhonenumber;
-    $sql = "INSERT INTO merchants (name, surname, phonenumber)
-    VALUES ('$merchantName', '$merchantSurname', '$merchantPhonenumber');";
-    $conn->query($sql);
-}
 
 function getProductTypeId(){
     global $conn, $productTypeName;
@@ -114,13 +93,13 @@ function isMaximumMarketReserved(){
     
     $merchant_id = getMerchantId();
     
-    $sql = "SELECT COUNT(*) FROM
+    $sql = "SELECT count(*) FROM
     market_lock_reservations
     WHERE merchant_id = '$merchant_id'
     AND sale_date ='$saleDate';";
     
     $result = $conn->query($sql);
-    
+    return $result->num_rows;
     if ($result->num_rows > $MAXIMUN_RESERVED){
         return true;
     }  else {
@@ -129,34 +108,34 @@ function isMaximumMarketReserved(){
 }   
 ///////////////////////////////////////////  
 
+$test = isMaximumMarketReserved();
 
-if(isMaximumMarketReserved()){
-    echo 2;
-}
-// เช็คว่าล็อคว่างหรือไม่ ถ้าว่างให้ดำเนินการจองได้
-else if(isLockEmpty()){
-    // เช็คว่าพ่อค้า, แม่ค้า ท่านนี้อยู่ในฐานข้อมูลหรือไม่
-    if(getMerchantId() == 0){
-        setMerchantID();
-    }
+echo $test;
+// if(isMaximumMarketReserved()){
+//     echo 2;
+// }
+// // เช็คว่าล็อคว่างหรือไม่ ถ้าว่างให้ดำเนินการจองได้
+// else if (isLockEmpty() && getMerchantId() != 0){
+//     $market_lock_id = getMarketLockId();
+//     $merchant_id = getMerchantId();
+//     $product_type_id = getProductTypeId();
 
-    $market_admin_id = getMarketAdminId();
-    $market_lock_id = getMarketLockId();
-    $merchant_id = getMerchantId();
-    $product_type_id = getProductTypeId();
-
-    $sql = "UPDATE market_lock_reservations
-    SET reservation_status = 2
-    , market_admin_id = $market_admin_id
-    , merchant_id = $merchant_id
-    , product_type_id = $product_type_id
-    WHERE market_lock_id = $market_lock_id
-    AND sale_date = '$saleDate';";
-    $conn->query($sql);
-    echo 1;
-} else {
-    echo 0;
-}
+//     $sql = "UPDATE market_lock_reservations
+//     SET reservation_status = 2
+//     , merchant_id = $merchant_id
+//     , product_type_id = $product_type_id
+//     WHERE market_lock_id = $market_lock_id
+//     AND sale_date = '$saleDate';";
+//     if($conn->query($sql)){
+//         echo 1; 
+//     } else {
+//         echo 'query error';
+//     }
+    
+   
+// } else {
+//     echo 0;
+// }
 
 $conn->close();
 ?>
