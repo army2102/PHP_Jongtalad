@@ -1,14 +1,9 @@
 <?php
 
+
 Require_once 'connectDB.php';
-
 $merchantUsername = $_POST['username'];
-$merchantName = $_POST['name'];
-$merchantSurname = $_POST['surname'];
-$merchantPhonenumber = $_POST['phonenumber'];
 $merchantPicture = $_POST['pictureUrl'];
-
-
 
 // Function list
 /////////////////////////////////////////////////
@@ -33,11 +28,13 @@ function getMerchantId() {
 
 /////////////////////////////////////////////////
 
+
+
 if(getMerchantId() != 0){
     $merchant_id = getMerchantId();
 
     $sql = "UPDATE merchants
-    SET name = '$merchantName', surname = '$merchantSurname', phonenumber = '$merchantPhonenumber'
+    SET picture_url = '$merchantPicture'
     WHERE merchant_id = '$merchant_id'";
 
     if($conn->query($sql) == true){
@@ -49,7 +46,6 @@ if(getMerchantId() != 0){
 } else {
     echo "This username ('$merchantUsername') doesn't in the  database";
 }
-
 
 
 $conn->close();

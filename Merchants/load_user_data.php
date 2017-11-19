@@ -4,7 +4,7 @@ require 'connectDB.php';
 
 $username = $_POST['username'];
 
-$sql = "SELECT name, surname, phonenumber FROM merchants
+$sql = "SELECT name, surname, phonenumber, picture_url FROM merchants
 WHERE username = '$username' ;";
 
 $result = $conn->query($sql);
